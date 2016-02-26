@@ -9,6 +9,10 @@ defmodule Surrogate do
     GenServer.call(__MODULE__, {:subscribe, topic})
   end
 
+  def unsubscribe(topic) do
+    GenServer.call(__MODULE__, {:unsubscribe, topic})
+  end
+
   ## Callbacks
 
   def init(opts) do
@@ -22,6 +26,12 @@ defmodule Surrogate do
 
     tops = Map.get(subs, pid, MapSet.new)
     subs = Map.put(subs, pid, MapSet.put(tops, topic))
+
+    {:reply, :ok, %{state | subs: subs}}
+  end
+  def handle_call({:unsubscribe, topic}, {pid, _}, %{subs: subs} = state) do
+    tops = Map.get(subs, pid, MapSet.new)
+    subs = Map.put(subs, pid, MapSet.delete(tops, topic))
 
     {:reply, :ok, %{state | subs: subs}}
   end
