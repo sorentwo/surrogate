@@ -11,10 +11,13 @@ defmodule Surrogate.Mixfile do
   end
 
   def application do
-    [applications: [:logger]]
+    [mod: {Surrogate, []},
+     applications: [:cowboy, :plug, :logger]]
   end
 
   defp deps do
-    [{:redix, "~> 0.3"}]
+    [{:redix, "~> 0.3"},
+     {:plug, "~> 1.0"},
+     {:cowboy, "~> 1.0"}]
   end
 end

@@ -1,11 +1,13 @@
 defmodule SurrogateTest do
   use ExUnit.Case
 
-  test "subscribe/1 links to a topic" do
-    {:ok, _pid} = Surrogate.start_link
+  alias Surrogate.PubSub
 
-    :ok = Surrogate.subscribe("topic.1")
-    :ok = Surrogate.subscribe("topic.2")
+  test "subscribe/1 links to a topic" do
+    {:ok, _pid} = PubSub.start_link
+
+    :ok = PubSub.subscribe("topic.1")
+    :ok = PubSub.subscribe("topic.2")
 
     {:ok, other_conn} = Redix.start_link
     {:ok, _} = Redix.command(other_conn, ~w(PUBLISH topic.1 hello))
@@ -16,10 +18,10 @@ defmodule SurrogateTest do
   end
 
   test "unsubscribe/1 unlinks a topic" do
-    {:ok, _pid} = Surrogate.start_link
+    {:ok, _pid} = PubSub.start_link
 
-    :ok = Surrogate.subscribe("topic.1")
-    :ok = Surrogate.unsubscribe("topic.1")
+    :ok = PubSub.subscribe("topic.1")
+    :ok = PubSub.unsubscribe("topic.1")
 
     {:ok, other_conn} = Redix.start_link
     {:ok, _} = Redix.command(other_conn, ~w(PUBLISH topic.1 hello))
